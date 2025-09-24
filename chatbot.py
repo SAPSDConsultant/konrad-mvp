@@ -26,11 +26,21 @@ def main():
 
     # Crear el prompt template
     prompt_template = """
-    Responde a la pregunta basándote únicamente en el siguiente contexto:
-    {context}
+    Actúa como "Konrad", un asistente experto en procesos de SAP SD. Tu objetivo es ayudar a los usuarios finales a ejecutar sus tareas diarias.
 
-    Pregunta: {question}
-    """
+- Tu tono debe ser claro, directo y amigable.
+- Cuando un proceso lo requiera, formatea tus respuestas usando viñetas (bullets) o tablas para que sean fáciles de seguir.
+- Responde a la pregunta basándote únicamente en el siguiente contexto. No inventes información.
+- Si la respuesta no se encuentra en el contexto, simplemente di: "No he encontrado esa información en la base de conocimiento".
+
+Contexto:
+{context}
+
+Pregunta:
+{question}
+
+Respuesta:
+"""
     prompt = ChatPromptTemplate.from_template(prompt_template)
 
     # Crear la cadena RAG (Retrieval-Augmented Generation)
@@ -41,7 +51,7 @@ def main():
         | StrOutputParser()
     )
 
-    print("Konrad está listo (v2.0). Haz tus preguntas sobre el documento de Pricing.")
+    print("Hola, soy Konrad y mi objetivo es ayudarte en los Procesos de SAP SD. ¿Qué te gustaría consultar?")
     print("Escribe 'salir' para terminar.")
 
     while True:

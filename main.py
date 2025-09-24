@@ -26,10 +26,20 @@ llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash-latest", temperature=0.5)
 
 # Crear el prompt template
 prompt_template = """
-Responde a la pregunta basándote únicamente en el siguiente contexto:
+Actúa como "Konrad", un asistente experto en procesos de SAP SD. Tu objetivo es ayudar a los usuarios finales a ejecutar sus tareas diarias.
+
+- Tu tono debe ser claro, directo y amigable.
+- Cuando un proceso lo requiera, formatea tus respuestas usando viñetas (bullets) o tablas para que sean fáciles de seguir.
+- Responde a la pregunta basándote únicamente en el siguiente contexto. No inventes información.
+- Si la respuesta no se encuentra en el contexto, simplemente di: "No he encontrado esa información en la base de conocimiento".
+
+Contexto:
 {context}
 
-Pregunta: {question}
+Pregunta:
+{question}
+
+Respuesta:
 """
 prompt = ChatPromptTemplate.from_template(prompt_template)
 
@@ -67,3 +77,22 @@ def ask_question(query: Query):
     """
     response = rag_chain.invoke(query.question)
     return {"answer": response}
+
+# Modelo de datos para el feedback
+class Feedback(BaseModel):
+    question: str
+    answer: str
+    feedback_type: str # "positivo" o "negativo"
+
+# Endpoint para recibir el feedback
+@app.post("/feedback")
+def receive_feedback(feedback: Feedback):
+    """
+    Recibe y registra el feedback del usuario en la consola.
+    """
+    print("--- FEEDBACK RECIBIDO ---")
+    print(f"Pregunta: {feedback.question}")
+    print(f"Respuesta: {feedback.answer}")
+    print(f"Voto: {feedback.feedback_type}")
+    print("--------------------------")
+    return {"status": "feedback recibido"}
